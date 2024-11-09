@@ -1,0 +1,16 @@
+version: '3.6'
+
+services:
+  rancher:
+    image: rancher/rancher:latest
+    restart: always
+    ports:
+    - "8088:80/tcp"
+    - "8443:443/tcp"
+    volumes:
+    - ./rancher-data:/var/lib/rancher
+    - /etc/resolved.conf:/etc/resolved.conf
+    environment:
+      - TZ=Asia/Shanghai
+      - CATTLE_BOOTSTRAP_PASSWORD=RancherJSDu
+    privileged: true

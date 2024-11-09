@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netbird
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: netbird
+  template:
+    metadata:
+      labels:
+        app: netbird
+    spec:
+      hostname: jsdu-netbird-network  # 增加 hostname
+      containers:
+        - name: netbird
+          image: netbirdio/netbird:latest
+          env:
+            - name: NB_SETUP_KEY
+              value: "your NB_SETUP_KEY"  # 使用 Docker Compose 中的值
+            - name: NB_MANAGEMENT_URL
+              value: "NB_MANAGEMENT_URL"  # 使用 Docker Compose 中的值
+            - name: NB_ADMIN_URL
+              value: "NB_ADMIN_URL"  # 使用 Docker Compose 中的值
+            - name: NB_LOG_LEVEL
+              value: "info"
+            - name: NB_HOSTNAME
+              value: "jsdu-netbird-network" # name that will appear in the management UI
+          securityContext:
+            privileged: true  # 设置为特权 Pod, 路由转发者必须要加特权容器
+            capabilities:
+              add:
+                - NET_ADMIN
+                - SYS_RESOURCE
+                - SYS_ADMIN
+          volumeMounts:
+            - name: netbird-config
+              mountPath: /etc/netbird  # 挂载 /etc/netbird
+      dnsPolicy: ClusterFirst
+      dnsConfig:
+        nameservers:
+          - 1.1.1.1  # 使用 Docker Compose 中的 DNS 配置
+          - 1.0.0.1  # 使用 Docker Compose 中的 DNS 配置
+      volumes:
+        - name: netbird-config
+          hostPath:
+            path: /path/to/netbird/config  # 挂载主机路径
