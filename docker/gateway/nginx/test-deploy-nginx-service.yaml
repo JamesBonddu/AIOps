@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-jsdu-service
+  namespace: gpu-device-plugin
+  labels:
+    app: nginx-jsdu
+spec:
+  type: ClusterIP  # 你可以根据需要选择其他类型，如 NodePort 或 LoadBalancer
+  ports:
+  - port: 80        # Service 的端口
+    targetPort: 80  # 目标 Pod 的端口
+  selector:
+    app: nginx-jsdu  # 选择与 Deployment 中 Pod 匹配的标签

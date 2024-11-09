@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-jsdu-deployment
+  namespace: gpu-device-plugin
+  labels:
+    app: nginx-jsdu
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-jsdu
+  template:
+    metadata:
+      labels:
+        app: nginx-jsdu
+    spec:
+      containers:
+      - name: nginx-jsdu
+        image: nginx
+        imagePullPolicy: IfNotPresent
+        # command: ["/bin/bash", "-c", "/usr/sbin/sshd -D"]
+        ports:
+        - containerPort: 80
+      nodeName: k8s-node2
