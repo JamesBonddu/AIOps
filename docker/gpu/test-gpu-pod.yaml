@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-gpu-pod
+  namespace: gpu-device-plugin
+spec:
+  restartPolicy: Never
+  containers:
+    - name: test-gpu-cuda102-container
+      # docker pull nvidia/samples:vectoradd-cuda11.6.0-ubi8
+      image: nvcr.io/nvidia/k8s/cuda-sample:vectoradd-cuda10.2
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/sh", "-c", "tail -f /dev/null"]
+      # command: ["/bin/bash", "-c", "/usr/sbin/sshd -D & python -m vllm.entrypoints.openai.api_server --model /models/Qwen1.5-14B-Chat"]
+      resources:
+        limits:
+          nvidia.com/gpu: 2
+      # volumeMounts:
+      #   - name: model-volume
+      #     mountPath: /models
+  nodeName: k8s-node2
+  tolerations:
+    - key: nvidia.com/gpu
+      operator: Exists
+      effect: NoSchedule
+  # volumes:
+  #   - name: model-volume
+  #     hostPath:
+  #       path: /data3/ai-sys/
+  #       type: Directory
