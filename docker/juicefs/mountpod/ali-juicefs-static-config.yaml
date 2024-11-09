@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ali-juicefs-pv
+  labels:
+    app: ali-juicefs-pvc
+spec:
+  # 目前 JuiceFS CSI 驱动不支持给静态 PV 设置存储容量，填写任意有效值即可
+  capacity:
+    storage: 50Pi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  csi:
+    # 在先前的安装步骤中，已经创建了名为 csi.juicefs.com 的 CSIDriver
+    driver: csi.juicefs.com
+    # volumeHandle 需要保证集群内唯一，因此一般直接用 PV 名即可
+    volumeHandle: ali-juicefs-pv
+    fsType: juicefs
+    # 在先前的步骤中已经创建好文件系统认证信息（Secret），在这里引用
+    # 如果要在静态配置下使用不同的认证信息，甚至使用不同的 JuiceFS 文件系统，则需要创建不同的 Secret
+    nodePublishSecretRef:
+      name: ali-juicefs-secret
+      namespace: default
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ali-juicefs-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  # 静态配置下必须指定 storageClassName 为空字符串
+  # 代表该 PV 不采用任何 StorageClass，而是直接使用 selector 所指定的 PV
+  storageClassName: ""
+  # 由于目前 JuiceFS CSI 驱动不支持给静态 PV 设置存储容量，此处 requests.storage 填写任意小于 PV capacity 的有效值即可
+  resources:
+    requests:
+      storage: 50Pi
+  selector:
+    matchLabels:
+      app: ali-juicefs-pvc
