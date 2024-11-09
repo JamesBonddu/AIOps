@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  xinference:
+    image: xprobe/xinference:latest
+    ports:
+      - "9997:9997"
+    volumes:
+      - /data/models:/models
+      - ./xinference-start.sh:/opt/inference/xinference-start.sh
+    command: "xinference-local --host 0.0.0.0 --port 9997"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+              driver: nvidia
+              count: all
+
+networks:
+  default:
+    name: badou
