@@ -8,7 +8,16 @@ services:
     volumes:
       - /data/models:/models
       - ./xinference-start.sh:/opt/inference/xinference-start.sh
-    command: "xinference-local --host 0.0.0.0 --port 9997"
+      - /dev/shm:/dev/shm
+    working_dir: /opt/inference/
+    privileged: true
+    command:
+      - sh
+      - -c
+      - |
+        ln -sf /usr/lib/x86_64-linux-gnu/libcuda.so.535.183.01 /usr/lib/x86_64-linux-gnu/libcuda.so.1
+        python3 -m vllm.entrypoints.openai.api_server --model=/models/Qwen1.5-7B-Chat/ --max-model-len 4096 --uvicorn-log-level debug --tensor_parallel_size 2 2>&1 |tee /models/log/qwen/log &
+        xinference-local --host 0.0.0.0 --port 9997
     deploy:
       resources:
         reservations:
@@ -19,4 +28,4 @@ services:
 
 networks:
   default:
-    name: badou
+    name: xinference
