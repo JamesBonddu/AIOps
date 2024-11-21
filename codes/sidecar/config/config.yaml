@@ -1,0 +1,6 @@
+prometheus:
+  address: "http://192.168.211.115:30090"
+  timeout: 10s
+
+kubeconfig:
+  path: "/home/k8s-gpu/.kube/config"

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-app # Name of the deployment
+spec:
+  replicas: 1 # Number of replicas
+  selector:
+    matchLabels:
+      app: log-app # Label selector for the pod
+  template:
+    metadata:
+      labels:
+        app: log-app # Label for the pod
+    spec:
+      volumes:
+        - name: log-volume # Define a volume to store the logs
+          emptyDir: {} # Use an emptyDir volume type
+      containers:
+        - name: log-generator # Main container
+          image: busybox # Use the busybox image
+          command: ["/bin/sh"] # Override the default command
+          args: ["-c", "while true; do date >> /var/log/app.log; sleep 1; done"] # Run a shell script that generates logs every second
+          volumeMounts:
+            - name: log-volume # Mount the volume to the container
+              mountPath: /var/log # Mount it to the log directory
+        - name: log-reader # Sidecar container
+          image: busybox # Use another busybox image
+          command: ["/bin/sh"] # Override the default command
+          args: ["-c", "tail -f /var/log/app.log"] # Run a shell script that tails the log file
+          volumeMounts:
+            - name: log-volume # Mount the same volume as the main container
+              mountPath: /var/log # Mount it to the same directory in the sidecar container
