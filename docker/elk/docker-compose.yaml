@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  jsdu-es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.1
+    container_name: jsdu-es
+    restart: always
+    profiles: ["all", "es", "elasticsearch"]
+    environment:
+      ES_JAVA_OPTS: ${ES_JAVA_OPTS}
+      TZ: ${TIMEZONE}
+    ports:
+      - "${ES_PORT}:9200"
+      - "${ES_TRANSPORT}:9300"
+    volumes:
+      - ${LABOR_BASE_DATA}/elasticsearch:/usr/share/elasticsearch/data
+      - ./es/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./es/plugins/elasticsearch-analysis-ik-8.12.1:/usr/share/elasticsearch/plugins/ik
+      - ./es/analysis/synonyms.txt:/usr/share/elasticsearch/config/analysis/synonyms.txt
+      - ./es/config/extra_stopword.dic:/usr/share/elasticsearch/plugins/ik/config/extra_stopword.dic
+      - ./es/config/labor_ext.dic:/usr/share/elasticsearch/plugins/ik/config/labor_ext.dic
+      - ./es/config/IKAnalyzer.cfg.xml:/usr/share/elasticsearch/plugins/ik/config/IKAnalyzer.cfg.xml
+    healthcheck:
+      test: [ "CMD-SHELL", "curl http://localhost:9200" ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  jsdu-kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.1
+    container_name: jsdu-kibana
+    restart: always
+    profiles: ["all", "es", "kibana"]
+    ports:
+      - "${KIBANA_PORT}:5601"
+    depends_on:
+      - jsdu-es
+    volumes:
+      - ./es/kibana.yml:/usr/share/kibana/config/kibana.yml
