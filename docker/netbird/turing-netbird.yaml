@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: tl-k8s-netbird
+  namespace: default
+spec:
+  serviceName: tl-k8s-netbird
+  replicas: 6
+  selector:
+    matchLabels:
+      app: tl-k8s-netbird
+  template:
+    metadata:
+      labels:
+        app: tl-k8s-netbird
+    spec:
+      containers:
+        - name: netbird  # 容器名称保持为 netbird
+          image: netbirdio/netbird:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: NB_SETUP_KEY
+              value: "xxx"
+            - name: NB_MANAGEMENT_URL
+              value: "https://netmesh.gpt4fun.com:443"
+            - name: NB_ADMIN_URL
+              value: "https://netmesh.gpt4fun.com:443"
+            - name: NB_LOG_LEVEL
+              value: "info"
+            - name: NB_HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name  # 使用 Pod 名称作为 hostname
+          securityContext:
+            privileged: true  # 设置为特权 Pod, 路由转发者必须要加特权容器
+            capabilities:
+              add:
+                - NET_ADMIN
+                - SYS_RESOURCE
+                - SYS_ADMIN
+          volumeMounts:
+            - name: netbird-config
+              mountPath: /etc/netbird  # 挂载 /etc/netbird
+              subPath: "$(NB_HOSTNAME)"  # 使用 Pod 名称作为 subPath
+      dnsPolicy: ClusterFirst
+      dnsConfig:
+        nameservers:
+          - 223.5.5.5
+          - 223.6.6.6
+  volumeClaimTemplates:
+    - metadata:
+        name: netbird-config
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi  # 根据需要调整存储大小

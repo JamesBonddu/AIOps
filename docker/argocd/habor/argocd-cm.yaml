@@ -1,0 +1,37 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"ConfigMap","metadata":{"annotations":{},"labels":{"app.kubernetes.io/name":"argocd-cm","app.kubernetes.io/part-of":"argocd"},"name":"argocd-cm","namespace":"argocd"}}
+  creationTimestamp: "2024-12-06T07:08:58Z"
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+  name: argocd-cm
+  namespace: argocd
+  resourceVersion: "137302"
+  uid: bab4c3d0-9696-45a0-9ea6-83cacfe50e6e
+data:
+  repositories: |
+    - name: ali-HK-Harbor
+      api_url: http://host:port
+      credentials: secret:default/harbor-credentials#creds
+      defaultns: library
+      default: true
+      insecure: yes
+data:
+  repositories: |
+    - url: http://host:port
+      type: helm
+      usernameSecret:
+        name: ali-hk-harbor-credentials
+        key: username
+      passwordSecret:
+        name: ali-hk-harbor-credentials
+        key: password
+kind: ConfigMap
