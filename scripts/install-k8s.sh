@@ -1,4 +1,6 @@
 #!/bin/bash
+# export http_proxy=http://127.0.0.1:27800
+# export https_proxy=https://127.0.0.1:27800
 
 # Function to update package list
 update_package_list() {
@@ -7,8 +9,9 @@ update_package_list() {
 
 # Function to install required packages
 install_required_packages() {
-    sudo apt-get install -y bison git
-    sudo apt install -y socat conntrack ebtables ipvsadm ipset
+    sudo apt install -y curl wget git privoxy net-tools unzip zip
+    # install k8s
+    sudo apt install -y bison socat conntrack ebtables ipvsadm ipset
 }
 
 # Function to install gvm (Go Version Manager)
@@ -18,13 +21,16 @@ install_gvm() {
 
 # Function to install Docker
 install_docker() {
-    curl https://releases.rancher.com/install-docker/20.10.sh | sh
+    # curl -x $https_proxy https://releases.rancher.com/install-docker/27.2.0.sh | sh
+    sudo sh rancher-docker-27.2.0.sh --mirror AzureChinaCloud --version 27
+    sudo systemctl enable docker
+    sudo systemctl restart docker
 }
 
 # Function to install kubekey
 install_kubekey() {
-    curl -sfL https://get-kk.kubesphere.io | VERSION=v3.1.6 sh -
-    tar -xvf kubekey-v3.1.6-linux-amd64.tar.gz
+    curl -sfL https://get-kk.kubesphere.io | VERSION=v3.1.7 sh -
+    tar -xvf kubekey-v3.1.7-linux-amd64.tar.gz
     chmod a+x kk && cp kk /usr/bin/
 }
 
@@ -42,7 +48,7 @@ set_hostname() {
 
 # Function to create KubeKey config file
 create_kubekey_config() {
-    kk create config --with-kubesphere v3.4.1
+    kk create config --with-kubernetes v1.31.2
     echo "Generate KubeKey config file successfully"
 }
 
@@ -97,10 +103,9 @@ main() {
     install_docker
     install_kubekey
     install_go
-    set_hostname
     create_kubekey_config
     ipvs_loading
-    create_cluster
+    # create_cluster
 }
 
 # Execute main function

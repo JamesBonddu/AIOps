@@ -1,0 +1,33 @@
+{
+    "default-runtime": "nvidia",
+    "runtimes": {
+        "nvidia": {
+            "args": [],
+            "path": "nvidia-container-runtime"
+        }
+    },
+    "dns": ["127.0.0.53"],
+    "data-root": "/data/docker",
+    "insecure-registries": [
+            "192.168.211.118",
+            "turing.harbor.domain",
+            "192.168.211.101:8090"
+    ],
+    "registry-mirrors": [
+            "https://9ytp9chd.mirror.aliyuncs.com",
+            "https://mirror.baidubce.com",
+            "https://hub-mirror.c.163.com/",
+            "https://docker.m.daocloud.io",
+            "https://dockerproxy.com",
+            "https://docker.mirrors.ustc.edu.cn",
+            "https://docker.nju.edu.cn",
+            "https://registry.aliyuncs.com",
+            "https://tx92qjdi.mirror.aliyuncs.com"
+    ],
+    "experimental": true,
+    "proxies": {
+       "no-proxy": "*.local,localhost,127.0.0.0/8",
+       "http-proxy": "http://127.0.0.1:27800",
+       "https-proxy": "https://127.0.0.1:27800"
+     }
+}
