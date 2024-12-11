@@ -1,0 +1,8 @@
+.DS_Store
+.che
+kong
+*.bak
+submit
+**/*.deb
+**/*.rpm
+**/*.apk
