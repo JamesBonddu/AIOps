@@ -1,3 +1,6 @@
 [submodule "docker/juicefs/charts"]
 	path = docker/juicefs/charts
 	url = git@github.com:juicedata/charts.git
+[submodule "docker/kong/kong/docker-kong"]
+	path = docker/kong/kong/docker-kong
+	url = git@github.com:Kong/docker-kong.git
