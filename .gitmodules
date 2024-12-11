@@ -4,3 +4,9 @@
 [submodule "docker/kong/kong/docker-kong"]
 	path = docker/kong/kong/docker-kong
 	url = git@github.com:Kong/docker-kong.git
+[submodule "docker/gpu/k8s-device-plugin"]
+	path = docker/gpu/k8s-device-plugin
+	url = git@github.com:NVIDIA/k8s-device-plugin.git
+[submodule "docker/gpu/gpu-operator"]
+	path = docker/gpu/gpu-operator
+	url = git@github.com:NVIDIA/gpu-operator.git

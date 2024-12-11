@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-container-motd
+spec:
+  containers:
+  - name: main-container
+    image: busybox
+    command: ["sh", "-c", "tail -f /dev/null"]
+    volumeMounts:
+    - name: motd-volume
+      mountPath: /etc/update-motd.d
+  initContainers:
+  - name: init-container
+    image: busybox
+    command:
+      - "sh"
+      - "-c"
+      - "cp /configmap/custom-motd-script.sh /etc/update-motd.d/00-custom-motd && chmod +x /etc/update-motd.d/00-custom-motd"
+    volumeMounts:
+    - name: motd-volume
+      mountPath: /etc/update-motd.d
+    - name: configmap-volume
+      mountPath: /configmap
+  volumes:
+  - name: motd-volume
+    emptyDir: {}
+  - name: configmap-volume
+    configMap:
+      name: custom-motd-script
