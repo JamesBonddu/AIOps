@@ -1,0 +1,36 @@
+config_version: 2
+name: iZj6c7n350g1glqucpzslbZ
+dataplaneapi:
+  debug_socket_path: /var/run/dataplane-debug.sock
+  host: 0.0.0.0
+  port: 8005
+  advertised:
+    api_address: ""
+    api_port: 0
+  scheme:
+  - http
+  userlist:
+    userlist: dataplaneapi
+  transaction:
+    transaction_dir: /var/lib/dataplaneapi/transactions
+    backups_number: 10
+    backups_dir: /var/lib/dataplaneapi/backups
+  resources:
+    maps_dir: /etc/haproxy/maps
+    ssl_certs_dir: /etc/haproxy/ssl
+    general_storage_dir: /etc/haproxy/general
+    spoe_dir: /etc/haproxy/spoe
+haproxy:
+  config_file: /etc/haproxy/haproxy.cfg
+  haproxy_bin: /usr/sbin/haproxy
+  reload:
+    reload_delay: 5
+    service_name: haproxy
+    reload_strategy: systemd
+log_targets:
+- log_to: file
+  log_file: /var/log/dataplaneapi.log
+  log_level: debug
+  log_types:
+  - access
+  - app
