@@ -1,0 +1,18 @@
+version: '3'
+services:
+  openresty:
+    container_name: openresty-proxy
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # - ./app/api.lua:/etc/nginx/conf.d/api.lua
+      - ./dist:/data/dist
+      - ./app/server.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./app/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+      - ./app/validate_token.lua:/etc/nginx/conf.d/validate_token.lua
+      - ./key.pem:/etc/nginx/ssl/fullchain.pem
+      - ./private.pem:/etc/nginx/ssl/privkey.pem
